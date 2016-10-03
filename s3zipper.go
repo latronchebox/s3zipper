@@ -52,7 +52,7 @@ func main() {
 		return
 	}
 
-	configFile, _ := os.Open("/home/gouser/work/src/github.com/javifr/s3zipper/conf.json")
+	configFile, _ := os.Open("conf.json")
 	decoder := json.NewDecoder(configFile)
 	err := decoder.Decode(&config)
 	if err != nil {
