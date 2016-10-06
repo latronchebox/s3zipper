@@ -95,7 +95,7 @@ func test() {
 // }
 
 func initAwsBucket() {
-
+	
 	fmt.Println("Initializing aws buccket bear!", config.Port)
 	expiration := time.Now().Add(time.Hour * 1)
 	auth, err := aws.GetAuth(config.AccessKey, config.SecretKey, "", expiration) //"" = token which isn't needed
@@ -104,6 +104,7 @@ func initAwsBucket() {
 	}
 
 	aws_bucket = s3.New(auth, aws.GetRegion(config.Region)).Bucket(config.Bucket)
+	aws_bucket.Signature = aws.V4Signature
 }
 
 func InitRedis() {
@@ -116,7 +117,7 @@ func InitRedis() {
         Dial: func () (redigo.Conn, error) {
             c, err := redigo.Dial("tcp", config.RedisServerAndPort)
             if err != nil {
-								fmt.Println("Fucked up connection to redis!", err)
+		fmt.Println("Fucked up connection to redis!", err)
                 return nil, err
             }
             if _, err := c.Do("AUTH", config.RedisPassword); err != nil {
@@ -127,9 +128,9 @@ func InitRedis() {
         },
         TestOnBorrow: func(c redigo.Conn, t time.Time) error {
             _, err := c.Do("PING")
-						if err != nil {
-							panic("Error connecting to redis")
-						}
+		if err != nil {
+			panic("Error connecting to redis")
+		}
             return err
         },
     }
